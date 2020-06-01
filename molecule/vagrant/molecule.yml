@@ -1,0 +1,39 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: ./molecule/shared/requirements.yml
+
+driver:
+  name: vagrant
+  provider:
+    name: virtualbox
+
+platforms:
+  - name: ansible-vsftpd-xenial
+    box: ubuntu/xenial64
+  - name: ansible-vsftpd-bionic
+    box: ubuntu/bionic64
+  - name: ansible-vsftpd-focal
+    box: ubuntu/focal64
+  - name: ansible-vsftpd-stretch
+    box: debian/stretch64
+    groups:
+      - debian
+  - name: ansible-vsftpd-buster
+    box: debian/buster64
+    groups:
+      - debian
+
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: ../shared/prepare.yml
+    converge: ../shared/converge.yml
+  inventory:
+    group_vars:
+      debian:
+        ansible_python_interpreter: /usr/bin/python3
+
+verifier:
+  name: ansible
