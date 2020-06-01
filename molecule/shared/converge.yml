@@ -1,0 +1,18 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  roles:
+    - role: ansible-vsftpd
+      vsftpd_alpine_version: '3.12'
+      vsftpd_version: '3.0.3'
+      vsftpd_volumes_path: /srv/vsftpd
+      vsftpd_external_ip: 192.168.33.86
+      vsftpd_users:
+        - username: foo
+          password: foo123
+          uid: 2001
+        - username: bar
+          password: bar123
+          uid: 2002

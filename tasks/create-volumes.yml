@@ -1,0 +1,24 @@
+---
+- name: Create vsftpd directory
+  file:
+    path: "{{ vsftpd_volumes_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: Create config directory
+  file:
+    path: "{{ vsftpd_config_path }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0750
+
+- name: Create ftp volume
+  file:
+    path: "{{ vsftpd_ftp_volume }}"
+    state: directory
+    owner: nobody
+    group: nogroup
+    mode: 0750

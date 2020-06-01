@@ -1,0 +1,22 @@
+---
+- name: Users for creation
+  set_fact:
+    users_for_creation: []
+
+- name: determine if user needs to be created
+  include: create-ftp-user.yml
+  with_items: "{{ vsftpd_users }}"
+
+- name: create vsftpd users
+  shell: |
+    /usr/bin/docker exec {{ vsftpd_container_name }} \
+    /add-vsftpd-user.sh "{{ item.username }}" \
+                        '{{ item.password }}' \
+                        "{{ item.uid }}"
+  register: created_user
+  changed_when: created_user.stdout | length > 0
+  with_items: "{{ users_for_creation }}"
+  when: not (
+    molecule_docker_environment is defined
+    and molecule_docker_environment | bool
+    )

@@ -1,0 +1,85 @@
+---
+- name: Create config/vsftpd directory
+  file:
+    path: "{{ vsftpd_config_path }}/vsftpd"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: create vsftpd config
+  template:
+    src: vsftpd.conf.j2
+    dest: "{{ vsftpd_config_path }}/vsftpd/vsftpd.conf"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart vsftpd service
+
+- name: Create config/etc directory
+  file:
+    path: "{{ vsftpd_config_path }}/etc"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Check if passwd db exists
+  stat:
+    path: "{{ vsftpd_config_path }}/etc/passwd"
+  register: passwd_file
+
+- name: Create passwd db file
+  copy:
+    src: files/etc/passwd
+    dest: "{{ vsftpd_config_path }}/etc/passwd"
+    owner: root
+    group: root
+    mode: 0644
+  when: not passwd_file.stat.exists
+
+- name: Check if shadow db exists
+  stat:
+    path: "{{ vsftpd_config_path }}/etc/shadow"
+  register: shadow_file
+
+- name: Create shadow db file
+  copy:
+    src: files/etc/shadow
+    dest: "{{ vsftpd_config_path }}/etc/shadow"
+    owner: root
+    group: root
+    mode: 0640
+  when: not shadow_file.stat.exists
+
+- name: Check if group db exists
+  stat:
+    path: "{{ vsftpd_config_path }}/etc/group"
+  register: group_file
+
+- name: Create group db file
+  copy:
+    src: files/etc/group
+    dest: "{{ vsftpd_config_path }}/etc/group"
+    owner: root
+    group: root
+    mode: 0644
+  when: not group_file.stat.exists
+
+- name: Create config/pam.d directory
+  file:
+    path: "{{ vsftpd_config_path }}/pam.d"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Create pam.d/vsftpd file
+  copy:
+    src: files/etc/pam.d/vsftpd
+    dest: "{{ vsftpd_config_path }}/pam.d/vsftpd"
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart vsftpd service

@@ -1,0 +1,53 @@
+---
+- name: Create docker working directory
+  file:
+    path: "{{ vsftpd_docker_working_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Template dockerfile
+  template:
+    src: Dockerfile.j2
+    dest: "{{ vsftpd_docker_working_directory }}/Dockerfile"
+    owner: root
+    group: root
+    mode: 0644
+  register: dockerfile
+
+
+- name: Copy add-user script
+  copy:
+    src: files/add-vsftpd-user.sh
+    dest: "{{ vsftpd_docker_working_directory }}/add-vsftpd-user.sh"
+    owner: root
+    group: root
+    mode: 0755
+  register: docker_add_user_script
+
+- name: Copy update-password script
+  copy:
+    src: files/update-vsftpd-user-password.sh
+    dest: "{{ vsftpd_docker_working_directory }}/update-vsftpd-user-password.sh"
+    owner: root
+    group: root
+    mode: 0755
+  register: docker_update_password_script
+
+- name: Build dockerimage
+  docker_image:
+    build:
+      path: "{{ vsftpd_docker_working_directory }}"
+      pull: false
+    name: "{{ vsftpd_image_name }}"
+    tag: "{{ vsftpd_version }}"
+    source: build
+    state: present
+    force_source: "{{
+      dockerfile.changed
+      or docker_add_user_script.changed
+      or docker_update_password_script.changed
+      or vsftpd_force_build
+      }}"
+  notify: Restart vsftpd service

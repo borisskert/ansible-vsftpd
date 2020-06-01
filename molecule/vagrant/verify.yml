@@ -22,9 +22,18 @@
         docker_file.stat.exists
         )
 
-  post_tasks:
-    - name: Delete built docker image
-      docker_image:
-        name: local/vsftpd:latest
-        state: absent
-      failed_when: false
+    - name: Should open 20/tcp port
+      command: nc -z -w1 localhost 20
+      register: netcat_20
+      retries: 300
+      delay: 1
+      until: netcat_20 is defined
+        and netcat_20.rc == 0
+
+    - name: Should open 21/tcp port
+      command: nc -z -w1 localhost 21
+      register: netcat_21
+      retries: 300
+      delay: 1
+      until: netcat_21 is defined
+        and netcat_21.rc == 0

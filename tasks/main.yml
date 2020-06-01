@@ -1,2 +1,39 @@
 ---
-# tasks file for ansible-vsftpd
+- include: check-parameters.yml
+- include: create-volumes.yml
+- include: create-docker-image.yml
+- include: initialize-config.yml
+
+- name: create systemd unit file
+  template:
+    src: vsftpd.systemd.j2
+    dest: "/etc/systemd/system/{{ vsftpd_service_name }}.service"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart vsftpd service
+
+- name: start systemd-managed docker containers
+  meta: flush_handlers
+
+- name: enable service
+  systemd:
+    name: "{{ vsftpd_service_name }}"
+    enabled: true
+    state: started
+  when: not (
+    molecule_docker_environment is defined
+    and molecule_docker_environment | bool
+    )
+
+- name: create users
+  include: create-ftp-users.yml
+
+- name: update user passwords
+  include: update-password.yml
+  with_items: "{{
+   vsftpd_users
+   | selectattr('update_password', 'true')
+   | list
+   }}"

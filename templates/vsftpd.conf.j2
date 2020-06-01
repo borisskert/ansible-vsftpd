@@ -1,0 +1,26 @@
+xferlog_enable=YES
+connect_from_port_20=YES
+listen=YES
+local_enable=YES
+chroot_local_user=YES
+allow_writeable_chroot=YES
+background=NO
+ftpd_banner=Welcome to FTP Server
+dirmessage_enable=YES
+max_clients=10
+max_per_ip=5
+write_enable=YES
+local_umask=022
+passwd_chroot_enable=YES
+listen_ipv6=NO
+seccomp_sandbox=NO
+anonymous_enable=YES
+{% if vsftpd_pasv_enable is defined and vsftpd_pasv_enable | bool %}
+pasv_enable=YES
+pasv_max_port={{ vsftpd_pasv_max_port }}
+pasv_min_port={{ vsftpd_pasv_min_port }}
+{% if vsftpd_external_ip is defined and vsftpd_external_ip | length > 0 %}
+pasv_address={{ vsftpd_external_ip }}
+{% endif %}
+{% endif %}
+pam_service_name=vsftpd

@@ -1,0 +1,28 @@
+---
+- name: Check 'vsftpd_volumes_path' parameter
+  assert:
+    that:
+      - "vsftpd_volumes_path is defined"
+      - "vsftpd_volumes_path | length > 0"
+    fail_msg: "parameter 'vsftpd_volumes_path' is missing"
+
+- name: Check 'vsftpd_config_path' parameter
+  assert:
+    that:
+      - "vsftpd_config_path is defined"
+      - "vsftpd_config_path | length > 0"
+    fail_msg: "parameter 'vsftpd_config_path' is missing"
+
+- name: Check 'vsftpd_data_port' parameter
+  assert:
+    that:
+      - "vsftpd_data_port is defined"
+      - "vsftpd_data_port > 0"
+    fail_msg: "parameter 'vsftpd_data_port' is missing"
+
+- name: Check 'vsftpd_control_port' parameter
+  assert:
+    that:
+      - "vsftpd_control_port is defined"
+      - "vsftpd_control_port > 0"
+    fail_msg: "parameter 'vsftpd_control_port' is missing"

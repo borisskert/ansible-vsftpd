@@ -1,0 +1,10 @@
+---
+- name: Prepare
+  hosts: all
+  become: true
+
+  roles:
+    - role: install-docker
+      storage_driver: overlay2
+      cleanup_enabled: false
+      install_pip_docker: true

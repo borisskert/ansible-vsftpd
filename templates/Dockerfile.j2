@@ -1,0 +1,25 @@
+{% if vsftpd_alpine_version is not defined or vsftpd_alpine_version == 'latest' %}
+FROM alpine
+{% else %}
+FROM alpine:{{vsftpd_alpine_version}}
+{% endif %}
+
+MAINTAINER borisskert <boris.skert@gmail.com>
+
+RUN apk --no-cache --no-progress upgrade && \
+    apk --no-cache --no-progress add \
+        bash \
+{% if vsftpd_version is not defined or vsftpd_version == 'latest' %}
+        vsftpd
+{% else %}
+        vsftpd~={{ vsftpd_version }}
+{% endif %}
+
+COPY add-vsftpd-user.sh /add-vsftpd-user.sh
+COPY update-vsftpd-user-password.sh /update-vsftpd-user-password.shd
+
+VOLUME ["/etc/vsftpd", "/var/log", "/home"]
+
+EXPOSE 20 21 {{ vsftpd_pasv_min_port }}-{{ vsftpd_pasv_max_port }}
+
+ENTRYPOINT ["/usr/sbin/vsftpd", "/etc/vsftpd/vsftpd.conf"]
