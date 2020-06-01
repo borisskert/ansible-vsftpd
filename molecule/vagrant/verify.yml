@@ -24,6 +24,7 @@
 
     - name: Should open 20/tcp port
       command: nc -z -w1 localhost 20
+      changed_when: false
       register: netcat_20
       retries: 300
       delay: 1
@@ -32,6 +33,7 @@
 
     - name: Should open 21/tcp port
       command: nc -z -w1 localhost 21
+      changed_when: false
       register: netcat_21
       retries: 300
       delay: 1
