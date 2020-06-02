@@ -8,8 +8,9 @@ vsftpd_interface: 0.0.0.0
 vsftpd_volumes_path: ''
 vsftpd_config_path: "{{ vsftpd_volumes_path }}/config"
 vsftpd_log_volume: "{{ vsftpd_volumes_path }}/log"
-vsftpd_ftp_volume: "{{ vsftpd_volumes_path }}/ftp"
 vsftpd_home_volume: "{{ vsftpd_volumes_path }}/home"
+vsftpd_ftp_volume: "{{ vsftpd_volumes_path }}/home/public"
+vsftpd_incomming_volume: "{{ vsftpd_ftp_volume }}/incomming"
 
 vsftpd_service_name: vsftpd
 vsftpd_container_name: vsftpd.service
@@ -45,3 +46,6 @@ vsftpd_max_clients: 0
 vsftpd_max_per_ip: 0
 
 vsftpd_xferlog_enable: false
+
+vsftpd_ftp_uid: '021'
+vsftpd_ftp_gid: '021'

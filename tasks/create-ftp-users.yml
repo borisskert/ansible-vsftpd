@@ -12,3 +12,12 @@
     molecule_docker_environment is defined
     and molecule_docker_environment | bool
     )
+
+- name: Create user home directory
+  file:
+    path: "{{ vsftpd_home_volume }}/{{ item.username }}"
+    state: directory
+    owner: "{{ item.uid }}"
+    group: "{{ item.uid }}"
+    mode: 0755
+  with_items: "{{ vsftpd_users }}"

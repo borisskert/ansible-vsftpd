@@ -32,7 +32,8 @@ listen_ipv6=NO
 seccomp_sandbox=NO
 {% if vsftpd_anonymous_enable | bool %}
 anonymous_enable=YES
-anon_root=/var/lib/ftp
+anon_root=/home/public
+anon_mkdir_write_enable=YES
 {% if vsftpd_anon_upload_enable | bool %}
 anon_upload_enable=YES
 {% endif %}
