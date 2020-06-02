@@ -8,3 +8,9 @@
       storage_driver: overlay2
       cleanup_enabled: false
       install_pip_docker: true
+
+    - role: create-self-signed-certs
+      ca_name: ftp.site.org
+      certificates_directory: /srv/openssl/certs
+      sites:
+        - ftp.site.org

@@ -14,18 +14,6 @@ platforms:
     box: ubuntu/xenial64
     instance_raw_config_args:
       - 'vm.network "private_network", ip: "192.168.33.86"'
-  - name: ansible-vsftpd-bionic
-    box: ubuntu/bionic64
-  - name: ansible-vsftpd-focal
-    box: ubuntu/focal64
-  - name: ansible-vsftpd-stretch
-    box: debian/stretch64
-    groups:
-      - debian
-  - name: ansible-vsftpd-buster
-    box: debian/buster64
-    groups:
-      - debian
 
 provisioner:
   name: ansible

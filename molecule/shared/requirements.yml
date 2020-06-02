@@ -3,3 +3,8 @@
   src: https://github.com/borisskert/ansible-docker.git
   scm: git
   version: v20.05.26
+
+- name: create-self-signed-certs
+  src: https://github.com/borisskert/ansible-openssl-self-signed-certs.git
+  scm: git
+  version: v20.05.26

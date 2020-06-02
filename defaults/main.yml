@@ -20,9 +20,28 @@ vsftpd_alpine_version: latest
 vsftpd_docker_working_directory: /opt/vsftpd/docker
 vsftpd_force_build: false
 
-vsftpd_pasv_enable: true
-vsftpd_pasv_min_port: 21100
-vsftpd_pasv_max_port: 21110
-vsftpd_external_ip: ''
+vsftpd_pasv_enable: false
+vsftpd_pasv_min_port: ''
+vsftpd_pasv_max_port: ''
+vsftpd_pasv_address: ''
 
 vsftpd_users: []
+
+vsftpd_anonymous_enable: false
+vsftpd_anon_upload_enable: false
+
+vsftpd_ipv6_enable: false
+
+vsftpd_ssl_enable: false
+vsftpd_ssl_cert_file: ''
+vsftpd_ssl_private_key_file: ''
+vsftpd_require_ssl_reuse: true
+vsftpd_allow_anon_ssl: false
+
+vsftpd_banner: Welcome to FTP Server
+vsftpd_dirmessage_enable: false
+
+vsftpd_max_clients: 0
+vsftpd_max_per_ip: 0
+
+vsftpd_xferlog_enable: false

@@ -8,7 +8,16 @@
       vsftpd_alpine_version: '3.12'
       vsftpd_version: '3.0.3'
       vsftpd_volumes_path: /srv/vsftpd
-      vsftpd_external_ip: 192.168.33.86
+      vsftpd_anonymous_enable: true
+      vsftpd_anon_upload_enable: true
+      vsftpd_pasv_enable: true
+      vsftpd_pasv_min_port: 21100
+      vsftpd_pasv_max_port: 21110
+      vsftpd_pasv_address: 192.168.33.86
+      vsftpd_ipv6_enable: false
+      vsftpd_ssl_enable: true
+      vsftpd_ssl_cert_file: /srv/openssl/certs/ftp.site.org/fullchain.pem
+      vsftpd_ssl_private_key_file: /srv/openssl/certs/ftp.site.org/privkey.pem
       vsftpd_users:
         - username: foo
           password: foo123

@@ -6,11 +6,38 @@
   tasks:
     - name: Should create vsftpd config
       stat:
-        path: /srv/vsftpd/config/vsftpd.conf
+        path: /srv/vsftpd/config/vsftpd/vsftpd.conf
         checksum_algorithm: sha256
       register: vsftpd_config_file
       failed_when: not (
         vsftpd_config_file.stat.exists
+        )
+
+    - name: Should create etc/passwd db file
+      stat:
+        path: /srv/vsftpd/config/etc/passwd
+        checksum_algorithm: sha256
+      register: etc_passwd_file
+      failed_when: not (
+        etc_passwd_file.stat.exists
+        )
+
+    - name: Should create etc/group db file
+      stat:
+        path: /srv/vsftpd/config/etc/group
+        checksum_algorithm: sha256
+      register: etc_group_file
+      failed_when: not (
+        etc_group_file.stat.exists
+        )
+
+    - name: Should create etc/shadow db file
+      stat:
+        path: /srv/vsftpd/config/etc/shadow
+        checksum_algorithm: sha256
+      register: etc_shadow_file
+      failed_when: not (
+        etc_shadow_file.stat.exists
         )
 
     - name: Should template Dockerfile
