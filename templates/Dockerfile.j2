@@ -20,6 +20,6 @@ COPY update-vsftpd-user-password.sh /update-vsftpd-user-password.shd
 
 VOLUME ["/etc/vsftpd", "/var/log", "/home"]
 
-EXPOSE 20 21 {{ vsftpd_pasv_min_port }}-{{ vsftpd_pasv_max_port }}
+EXPOSE 20 21
 
 ENTRYPOINT ["/usr/sbin/vsftpd", "/etc/vsftpd/vsftpd.conf"]

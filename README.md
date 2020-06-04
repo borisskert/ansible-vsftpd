@@ -79,7 +79,7 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
   become: yes
 
   roles:
-    - role: ansible-vsftpd
+    - role: install-vsftpd
       vsftpd_alpine_version: '3.12'
       vsftpd_version: '3.0.3'
       vsftpd_volumes_path: /srv/vsftpd
