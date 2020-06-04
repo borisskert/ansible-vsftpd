@@ -3,10 +3,15 @@ xferlog_enable=YES
 {% else %}
 xferlog_enable=NO
 {% endif %}
+{% if vsftpd_log_ftp_protocol | bool %}
+log_ftp_protocol=YES
+{% endif %}
 local_enable=YES
+{% if vsftpd_chroot_users | bool %}
 chroot_local_user=YES
 passwd_chroot_enable=YES
 allow_writeable_chroot=YES
+{% endif %}
 background=NO
 {% if vsftpd_banner is defined and vsftpd_banner | length > 0 %}
 ftpd_banner={{ vsftpd_banner }}

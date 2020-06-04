@@ -23,15 +23,15 @@
     group: root
     mode: 0755
 
-- name: Create ftp volume
+- name: Create public volume
   file:
-    path: "{{ vsftpd_ftp_volume }}"
+    path: "{{ vsftpd_public_volume }}"
     state: directory
     owner: root
     group: root
     mode: 0555
 
-- name: Create ftp/incomming volume
+- name: Create incomming volume
   file:
     path: "{{ vsftpd_incomming_volume }}"
     state: directory

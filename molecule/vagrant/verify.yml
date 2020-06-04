@@ -6,7 +6,7 @@
   tasks:
     - name: Should create vsftpd config
       stat:
-        path: /srv/vsftpd/config/vsftpd.conf
+        path: /srv/vsftpd/config/vsftpd/vsftpd.conf
         checksum_algorithm: sha256
       register: vsftpd_config_file
       failed_when: not (

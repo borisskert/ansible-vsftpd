@@ -1,0 +1,8 @@
+{{ vsftpd_log_volume }}/*.log
+{{ vsftpd_log_volume }}/xferlog
+{
+	rotate 8
+	weekly
+	compress
+	missingok
+}

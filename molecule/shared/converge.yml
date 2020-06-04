@@ -19,6 +19,9 @@
       vsftpd_ssl_cert_file: /srv/openssl/certs/ftp.site.org/fullchain.pem
       vsftpd_ssl_private_key_file: /srv/openssl/certs/ftp.site.org/privkey.pem
       vsftpd_xferlog_enable: true
+      vsftpd_log_ftp_protocol: true
+      vsftpd_chroot_users: true
+      vsftpd_logrotate_enable: true
       vsftpd_users:
         - username: foo
           password: foo123
