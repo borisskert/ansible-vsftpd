@@ -23,6 +23,8 @@ ExecStart=/usr/bin/docker run \
 {% if vsftpd_ssl_enable | bool %}
     --volume {{ vsftpd_ssl_cert_file }}:/etc/ssl/cert.pem:ro \
     --volume {{ vsftpd_ssl_private_key_file }}:/etc/ssl/cert.key:ro \
+    --publish {{ vsftpd_interface }}:{{ vsftpd_secure_data_port }}:989 \
+    --publish {{ vsftpd_interface }}:{{ vsftpd_secure_control_port }}:990 \
 {% endif %}
     --publish {{ vsftpd_interface }}:{{ vsftpd_data_port }}:20 \
     --publish {{ vsftpd_interface }}:{{ vsftpd_control_port }}:21 \

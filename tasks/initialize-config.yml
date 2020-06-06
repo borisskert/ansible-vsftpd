@@ -17,6 +17,16 @@
   notify:
     - Restart vsftpd service
 
+- name: create vsftpd userlist
+  template:
+    src: vsftpd.user_list.j2
+    dest: "{{ vsftpd_config_path }}/vsftpd/vsftpd.user_list"
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Restart vsftpd service
+
 - name: Create config/etc directory
   file:
     path: "{{ vsftpd_config_path }}/etc"

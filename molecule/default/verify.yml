@@ -13,6 +13,15 @@
         vsftpd_config_file.stat.exists
         )
 
+    - name: Should create vsftpd userlist file
+      stat:
+        path: /srv/vsftpd/config/vsftpd/vsftpd.user_list
+        checksum_algorithm: sha256
+      register: vsftpd_userlist_file
+      failed_when: not (
+        vsftpd_userlist_file.stat.exists
+        )
+
     - name: Should create etc/passwd db file
       stat:
         path: /srv/vsftpd/config/etc/passwd

@@ -6,16 +6,17 @@
   roles:
     - role: ansible-vsftpd
       vsftpd_alpine_version: '3.12'
-      vsftpd_version: '3.0.3'
       vsftpd_volumes_path: /srv/vsftpd
-      vsftpd_anonymous_enable: true
-      vsftpd_anon_upload_enable: true
+      vsftpd_log_volume: /var/log/vsftpd
+      vsftpd_home_volume: /srv/vsftpd/home
+      vsftpd_anonymous_enable: false
       vsftpd_pasv_enable: true
-      vsftpd_pasv_min_port: 21100
-      vsftpd_pasv_max_port: 21110
+      vsftpd_pasv_min_port: 21111
+      vsftpd_pasv_max_port: 21112
       vsftpd_pasv_address: 192.168.33.86
       vsftpd_ipv6_enable: false
-      vsftpd_ssl_enable: true
+      vsftpd_ssl_enable: false
+      vsftpd_require_ssl_reuse: false
       vsftpd_ssl_cert_file: /srv/openssl/certs/ftp.site.org/fullchain.pem
       vsftpd_ssl_private_key_file: /srv/openssl/certs/ftp.site.org/privkey.pem
       vsftpd_xferlog_enable: true

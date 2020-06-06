@@ -3,6 +3,8 @@ vsftpd_version: latest
 
 vsftpd_data_port: 20
 vsftpd_control_port: 21
+vsftpd_secure_data_port: 989
+vsftpd_secure_control_port: 990
 vsftpd_interface: 0.0.0.0
 
 vsftpd_volumes_path: ''

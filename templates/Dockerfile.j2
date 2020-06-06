@@ -6,7 +6,8 @@ FROM alpine:{{vsftpd_alpine_version}}
 
 MAINTAINER borisskert <boris.skert@gmail.com>
 
-RUN apk --no-cache --no-progress upgrade && \
+RUN apk --no-cache --no-progress update && \
+    apk --no-cache --no-progress upgrade && \
     apk --no-cache --no-progress add \
         bash \
 {% if vsftpd_version is not defined or vsftpd_version == 'latest' %}
