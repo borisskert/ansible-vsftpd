@@ -1,6 +1,4 @@
 ---
-vsftpd_version: latest
-
 vsftpd_data_port: 20
 vsftpd_control_port: 21
 vsftpd_secure_data_port: 989
@@ -11,14 +9,15 @@ vsftpd_volumes_path: ''
 vsftpd_config_path: "{{ vsftpd_volumes_path }}/config"
 vsftpd_log_volume: "{{ vsftpd_volumes_path }}/log"
 vsftpd_home_volume: "{{ vsftpd_volumes_path }}/home"
-vsftpd_public_volume: "{{ vsftpd_volumes_path }}/home/public"
+vsftpd_public_volume: "{{ vsftpd_volumes_path }}/public"
 vsftpd_incomming_volume: "{{ vsftpd_public_volume }}/incomming"
 
 vsftpd_service_name: vsftpd
 vsftpd_container_name: vsftpd.service
 
 vsftpd_image_name: local/vsftpd
-vsftpd_alpine_version: latest
+vsftpd_image_tag: latest
+vsftpd_centos_version: latest
 
 vsftpd_docker_working_directory: /opt/vsftpd/docker
 vsftpd_force_build: false
@@ -27,6 +26,7 @@ vsftpd_pasv_enable: false
 vsftpd_pasv_min_port: ''
 vsftpd_pasv_max_port: ''
 vsftpd_pasv_address: ''
+vsftpd_pasv_addr_resolve: false
 
 vsftpd_users: []
 
@@ -36,6 +36,7 @@ vsftpd_anon_upload_enable: false
 vsftpd_ipv6_enable: false
 
 vsftpd_ssl_enable: false
+vsftpd_implicit_ssl: false
 vsftpd_ssl_cert_file: ''
 vsftpd_ssl_private_key_file: ''
 vsftpd_require_ssl_reuse: true
@@ -50,8 +51,7 @@ vsftpd_max_per_ip: 0
 vsftpd_xferlog_enable: false
 vsftpd_log_ftp_protocol: false
 
-vsftpd_ftp_uid: '021'
-vsftpd_ftp_gid: '021'
+vsftpd_ftp_gid: '50'
 
 vsftpd_chroot_users: false
 

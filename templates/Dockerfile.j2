@@ -1,20 +1,16 @@
-{% if vsftpd_alpine_version is not defined or vsftpd_alpine_version == 'latest' %}
-FROM alpine
+{% if vsftpd_centos_version is not defined or vsftpd_centos_version == 'latest' %}
+FROM centos:latest
 {% else %}
-FROM alpine:{{vsftpd_alpine_version}}
+FROM centos:{{ vsftpd_centos_version }}
 {% endif %}
 
 MAINTAINER borisskert <boris.skert@gmail.com>
 
-RUN apk --no-cache --no-progress update && \
-    apk --no-cache --no-progress upgrade && \
-    apk --no-cache --no-progress add \
-        bash \
-{% if vsftpd_version is not defined or vsftpd_version == 'latest' %}
-        vsftpd
-{% else %}
-        vsftpd~={{ vsftpd_version }}
-{% endif %}
+RUN yum -y update && \
+    yum clean all && \
+    yum install -y \
+      vsftpd && \
+    yum clean all
 
 COPY add-vsftpd-user.sh /add-vsftpd-user.sh
 COPY update-vsftpd-user-password.sh /update-vsftpd-user-password.shd

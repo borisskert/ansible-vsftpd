@@ -1,3 +1,6 @@
+{% if vsftpd_anonymous_enable | bool %}
+anonymous
+{% endif %}
 {% for vsftpd_user in vsftpd_users %}
 {{ vsftpd_user.username }}
 {% endfor %}

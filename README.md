@@ -23,7 +23,6 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
 
 | Variable       | Type | Mandatory? | Default | Description           |
 |----------------|------|------------|---------|-----------------------|
-| vsftpd_version | text | no         | latest  | Defines the vsftpd version to be installed |
 | vsftpd_data_port | number | no     | 20      | Defines the ftp data port |
 | vsftpd_control_port | number | no  | 21      | Defines the ftp control port |
 | vsftpd_interface    | ip address | no | 0.0.0.0 | Defines the mapped Docker network interface address |
@@ -35,6 +34,7 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
 | vsftpd_pasv_min_port | number    | yes, if PASV enabled |                   | Defines the minimum PASV port |
 | vsftpd_pasv_max_port | number    | yes, if PASV enabled |                   | Defines the maximum PASV port |
 | vsftpd_pasv_address  | text      | no                   |                   | Defines the PASV ip address |
+| vsftpd_pasv_addr_resolve | text  | no                   |                   | Read the vsftp docs: see `pasv_addr_resolve` option |
 | vsftpd_users         | array of `user` | no             | []                | Defines the vsftpd users |
 | vsftpd_anonymous_enable | boolean      | no             | false             | Enables anonymous access without login |
 | vsftpd_anon_upload_enable | boolean    | no             | false             | Enables anonymous file uploads         |
@@ -44,6 +44,7 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
 | vsftpd_ssl_private_key_file | text     | yes, if SSL/TLS is enabled |       | Setup the SSL/TLS private |
 | vsftpd_require_ssl_reuse    | boolean  | no                         | true  | Read the vsftp docs: see `require_ssl_reuse` option |
 | vsftpd_allow_anon_ssl       | boolean  | no                         | false | Read the vsftp docs: see `allow_anon_ssl` option |
+| vsftpd_implicit_ssl         | boolean  | no                         | false | Read the vsftp docs: see `implicit_ssl` option |
 | vsftpd_banner               | text     | no                         | Welcome to FTP Server | Read the vsftp docs: see `ftpd_banner` option |
 | vsftpd_dirmessage_enable    | boolean  | no                         | false                 | Read the vsftp docs: see `dirmessage_enable` option |
 | vsftpd_max_clients          | number   | no                         | 0                     | Read the vsftp docs: see `max_clients` option |
@@ -80,17 +81,22 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
 
   roles:
     - role: install-vsftpd
-      vsftpd_alpine_version: '3.12'
-      vsftpd_version: '3.0.3'
+      vsftpd_centos_version: 8.1.1911
       vsftpd_volumes_path: /srv/vsftpd
+      vsftpd_log_volume: /var/log/vsftpd
+      vsftpd_home_volume: /srv/vsftpd/home
       vsftpd_anonymous_enable: true
       vsftpd_anon_upload_enable: true
       vsftpd_pasv_enable: true
-      vsftpd_pasv_min_port: 21100
-      vsftpd_pasv_max_port: 21110
-      vsftpd_pasv_address: 192.168.33.86
+      vsftpd_pasv_min_port: 21111
+      vsftpd_pasv_max_port: 21112
+      vsftpd_pasv_address: my.ftpserver.org
+      vsftpd_pasv_addr_resolve: true
       vsftpd_ipv6_enable: false
       vsftpd_ssl_enable: true
+      vsftpd_require_ssl_reuse: false
+      vsftpd_implicit_ssl: false
+      vsftpd_allow_anon_ssl: true
       vsftpd_ssl_cert_file: /srv/openssl/certs/ftp.site.org/fullchain.pem
       vsftpd_ssl_private_key_file: /srv/openssl/certs/ftp.site.org/privkey.pem
       vsftpd_xferlog_enable: true
@@ -105,7 +111,6 @@ Installs a [vsftpd](https://security.appspot.com/vsftpd.html) FTP server as a sy
           password: bar123
           uid: 2002
 ```
-
 
 ## Testing
 
@@ -137,6 +142,12 @@ Within the Github Actions pipeline I use [my molecule Docker image](https://gith
 ## License
 
 MIT
+
+## Design decisions
+
+| Decision | Alternatives | Reason |
+| -------- | ------------ | ------ |
+| Why centos base image? | alpine | vsftp on alpine causes weird segfaults on logoff when TLS enabled |
 
 ## Links
 

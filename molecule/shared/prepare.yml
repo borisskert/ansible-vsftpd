@@ -10,7 +10,9 @@
       install_pip_docker: true
 
     - role: create-self-signed-certs
-      ca_name: ftp.site.org
-      certificates_directory: /srv/openssl/certs
-      sites:
+      openssl_ca_name: ftp.site.org
+      openssl_certificates_directory: /srv/openssl/certs
+      openssl_ca_key_size: 4096
+      openssl_cert_key_size: 2048
+      openssl_sites:
         - ftp.site.org

@@ -9,8 +9,8 @@ Requires=docker.service
 [Service]
 ExecStartPre=-/usr/bin/docker rm -f {{ vsftpd_container_name }}
 ExecStartPre=/usr/bin/docker build \
-    --cache-from {{ vsftpd_image_name }}:{{ vsftpd_version }} \
-    --tag {{ vsftpd_image_name }}:{{ vsftpd_version }} \
+    --cache-from {{ vsftpd_image_name }}:{{ vsftpd_image_tag }} \
+    --tag {{ vsftpd_image_name }}:{{ vsftpd_image_tag }} \
     {{ vsftpd_docker_working_directory }}
 
 ExecStart=/usr/bin/docker run \
@@ -19,12 +19,15 @@ ExecStart=/usr/bin/docker run \
     --volume {{ vsftpd_config_path }}/pam.d/vsftpd:/etc/pam.d/vsftpd \
     --volume {{ vsftpd_config_path }}/vsftpd:/etc/vsftpd \
     --volume {{ vsftpd_home_volume }}:/home \
+    --volume {{ vsftpd_public_volume }}:/var/ftp \
     --volume {{ vsftpd_log_volume }}:/var/log \
 {% if vsftpd_ssl_enable | bool %}
     --volume {{ vsftpd_ssl_cert_file }}:/etc/ssl/cert.pem:ro \
     --volume {{ vsftpd_ssl_private_key_file }}:/etc/ssl/cert.key:ro \
+{% if vsftpd_implicit_ssl | bool %}
     --publish {{ vsftpd_interface }}:{{ vsftpd_secure_data_port }}:989 \
     --publish {{ vsftpd_interface }}:{{ vsftpd_secure_control_port }}:990 \
+{% endif %}
 {% endif %}
     --publish {{ vsftpd_interface }}:{{ vsftpd_data_port }}:20 \
     --publish {{ vsftpd_interface }}:{{ vsftpd_control_port }}:21 \
@@ -32,7 +35,7 @@ ExecStart=/usr/bin/docker run \
     --publish {{ vsftpd_interface }}:{{ vsftpd_pasv_min_port }}-{{ vsftpd_pasv_max_port }}:{{ vsftpd_pasv_min_port }}-{{ vsftpd_pasv_max_port }} \
 {% endif %}
     --tmpfs /tmp \
-    {{ vsftpd_image_name }}:{{ vsftpd_version }}
+    {{ vsftpd_image_name }}:{{ vsftpd_image_tag }}
 
 ExecStop=-/usr/bin/docker stop {{ vsftpd_container_name }}
 ExecStopPost=-/usr/bin/docker rm -f {{ vsftpd_container_name }}
