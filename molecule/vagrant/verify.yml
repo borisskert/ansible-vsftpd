@@ -5,22 +5,151 @@
 
   tasks:
     - name: Should create vsftpd config
-      stat:
-        path: /srv/vsftpd/config/vsftpd/vsftpd.conf
-        checksum_algorithm: sha256
+      slurp:
+        src: /srv/vsftpd/config/vsftpd/vsftpd.conf
       register: vsftpd_config_file
-      failed_when: not (
-        vsftpd_config_file.stat.exists
-        )
+      failed_when:
+        not vsftpd_config_file.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          xferlog_enable=YES
+          log_ftp_protocol=YES
+          local_enable=YES
+          chroot_local_user=YES
+          allow_writeable_chroot=YES
+          user_sub_token=$USER
+          local_root=/home/$USER
+          background=NO
+          seccomp_sandbox=NO
+          ftpd_banner=Welcome to FTP Server
+          max_clients=0
+          max_per_ip=0
+          write_enable=YES
+          local_umask=022
+          listen=YES
+          listen_ipv6=NO
+          seccomp_sandbox=NO
+          anonymous_enable=YES
+          anon_mkdir_write_enable=YES
+          anon_upload_enable=YES
+          pasv_enable=YES
+          pasv_max_port=21112
+          pasv_min_port=21111
+          pasv_address=192.168.33.86
+          connect_from_port_20=YES
+          pam_service_name=vsftpd
+          ssl_enable=YES
+          debug_ssl=YES
+          ssl_tlsv1=YES
+          ssl_sslv2=NO
+          ssl_sslv3=NO
+          force_local_data_ssl=YES
+          force_local_logins_ssl=YES
+          require_ssl_reuse=NO
+          ssl_ciphers=HIGH
+          allow_anon_ssl=YES
+          rsa_cert_file=/etc/ssl/cert.pem
+          rsa_private_key_file=/etc/ssl/cert.key
+          userlist_enable=YES
+          userlist_deny=NO
+          userlist_file=/etc/vsftpd/vsftpd.user_list
+          isolate_network=NO
+
+    - name: Should create systemd unit file
+      slurp:
+        src: /etc/systemd/system/vsftpd.service
+      register: systemd_unit_file
+      failed_when:
+        not systemd_unit_file.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          [Install]
+          WantedBy=multi-user.target
+
+          [Unit]
+          Description=vsftpd service
+          After=docker.service
+          Requires=docker.service
+
+          [Service]
+          ExecStartPre=-/usr/bin/docker rm -f vsftpd.service
+          ExecStartPre=/usr/bin/docker build \
+              --cache-from local/vsftpd:3.0.3-31.el8 \
+              --tag local/vsftpd:3.0.3-31.el8 \
+              /opt/vsftpd/docker
+
+          ExecStart=/usr/bin/docker run \
+              --name vsftpd.service \
+              --volume /srv/vsftpd/config/etc:/etc \
+              --volume /srv/vsftpd/config/pam.d/vsftpd:/etc/pam.d/vsftpd \
+              --volume /srv/vsftpd/config/vsftpd:/etc/vsftpd \
+              --volume /srv/vsftpd/home:/home \
+              --volume /srv/vsftpd/public:/var/ftp \
+              --volume /var/log/vsftpd:/var/log \
+              --volume /srv/openssl/certs/ftp.site.org/fullchain.pem:/etc/ssl/cert.pem:ro \
+              --volume /srv/openssl/certs/ftp.site.org/privkey.pem:/etc/ssl/cert.key:ro \
+              --publish 0.0.0.0:20:20 \
+              --publish 0.0.0.0:21:21 \
+              --publish 0.0.0.0:21111-21112:21111-21112 \
+              --tmpfs /tmp \
+              local/vsftpd:3.0.3-31.el8
+
+          ExecStop=-/usr/bin/docker stop vsftpd.service
+          ExecStopPost=-/usr/bin/docker rm -f vsftpd.service
+
+          Restart=always
+          RestartSec=60s
+          TimeoutSec=3600
 
     - name: Should template Dockerfile
-      stat:
-        path: /opt/vsftpd/docker/Dockerfile
-        checksum_algorithm: sha256
+      slurp:
+        src: /opt/vsftpd/docker/Dockerfile
       register: docker_file
-      failed_when: not (
-        docker_file.stat.exists
-        )
+      failed_when:
+        not docker_file.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          FROM centos:8.1.1911
+
+          MAINTAINER borisskert <boris.skert@gmail.com>
+
+          RUN yum -y update && \
+              yum clean all && \
+              yum install -y \
+                vsftpd && \
+              yum clean all
+
+          COPY add-vsftpd-user.sh /add-vsftpd-user.sh
+          COPY update-vsftpd-user-password.sh /update-vsftpd-user-password.shd
+
+          VOLUME ["/etc/vsftpd", "/var/log", "/home"]
+
+          EXPOSE 20 21
+
+          ENTRYPOINT ["/usr/sbin/vsftpd", "/etc/vsftpd/vsftpd.conf"]
+
+    - name: Should build docker image
+      docker_image:
+        name: local/vsftpd:latest
+        source: local
+        state: present
+
+    - name: Should setup logrotate
+      slurp:
+        src: /etc/logrotate.d/vsftpd
+      register: logrotate_config
+      failed_when:
+        not logrotate_config.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          /var/log/vsftpd/*.log
+          /var/log/vsftpd/xferlog
+          {
+              rotate 8
+              weekly
+              compress
+              missingok
+          }
 
     - name: Should open 20/tcp port
       command: nc -z -w1 localhost 20

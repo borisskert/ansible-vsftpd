@@ -9,7 +9,11 @@ MAINTAINER borisskert <boris.skert@gmail.com>
 RUN yum -y update && \
     yum clean all && \
     yum install -y \
+{% if vsftpd_package_version is defined and vsftpd_package_version != 'latest' %}
+      vsftpd-{{ vsftpd_package_version }} && \
+{% else %}
       vsftpd && \
+{% endif %}
     yum clean all
 
 COPY add-vsftpd-user.sh /add-vsftpd-user.sh

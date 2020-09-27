@@ -16,8 +16,8 @@ vsftpd_service_name: vsftpd
 vsftpd_container_name: vsftpd.service
 
 vsftpd_image_name: local/vsftpd
-vsftpd_image_tag: latest
 vsftpd_centos_version: latest
+vsftpd_package_version: latest
 
 vsftpd_docker_working_directory: /opt/vsftpd/docker
 vsftpd_force_build: false

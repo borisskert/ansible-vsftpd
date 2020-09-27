@@ -5,9 +5,9 @@
 
   roles:
     - role: install-docker
-      storage_driver: overlay2
-      cleanup_enabled: false
-      install_pip_docker: true
+      docker_storage_driver: overlay2
+      docker_cleanup_enabled: false
+      docker_install_pip_package: true
 
     - role: create-self-signed-certs
       openssl_ca_name: ftp.site.org

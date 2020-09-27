@@ -41,7 +41,7 @@
       path: "{{ vsftpd_docker_working_directory }}"
       pull: false
     name: "{{ vsftpd_image_name }}"
-    tag: "{{ vsftpd_image_tag }}"
+    tag: "{{ vsftpd_package_version }}"
     source: build
     state: present
     force_source: "{{

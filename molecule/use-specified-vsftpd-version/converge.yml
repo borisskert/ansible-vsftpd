@@ -1,0 +1,49 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  roles:
+    - role: ansible-vsftpd
+      vsftpd_centos_version: 8.2.2004
+
+      # Run `docker run --rm centos:8.2.2004 yum list vsftpd`
+      # Unable to find image 'centos:8.2.2004' locally
+      # 8.2.2004: Pulling from library/centos
+      # Digest: sha256:4062bbdd1bb0801b0aa38e0f83dece70fb7a5e9bce223423a68de2d8b784b43b
+      # Status: Downloaded newer image for centos:8.2.2004
+      # CentOS-8 - AppStream                            3.7 MB/s | 5.8 MB     00:01
+      # CentOS-8 - Base                                 2.1 MB/s | 2.2 MB     00:01
+      # CentOS-8 - Extras                                19 kB/s | 7.3 kB     00:00
+      # Available Packages
+      # vsftpd.x86_64                       3.0.3-31.el8                       AppStream
+
+      vsftpd_package_version: 3.0.3-31.el8
+      vsftpd_volumes_path: /srv/vsftpd
+      vsftpd_log_volume: /var/log/vsftpd
+      vsftpd_home_volume: /srv/vsftpd/home
+      vsftpd_anonymous_enable: true
+      vsftpd_anon_upload_enable: true
+      vsftpd_pasv_enable: true
+      vsftpd_pasv_min_port: 21111
+      vsftpd_pasv_max_port: 21112
+      vsftpd_pasv_address: 192.168.33.86
+      vsftpd_pasv_addr_resolve: false
+      vsftpd_ipv6_enable: false
+      vsftpd_ssl_enable: true
+      vsftpd_require_ssl_reuse: false
+      vsftpd_implicit_ssl: false
+      vsftpd_allow_anon_ssl: true
+      vsftpd_ssl_cert_file: /srv/openssl/certs/ftp.site.org/fullchain.pem
+      vsftpd_ssl_private_key_file: /srv/openssl/certs/ftp.site.org/privkey.pem
+      vsftpd_xferlog_enable: true
+      vsftpd_log_ftp_protocol: true
+      vsftpd_chroot_users: true
+      vsftpd_logrotate_enable: true
+      vsftpd_users:
+        - username: foo
+          password: foo123
+          uid: 2001
+        - username: bar
+          password: bar123
+          uid: 2002

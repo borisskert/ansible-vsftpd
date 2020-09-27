@@ -91,6 +91,52 @@
         etc_shadow_file.stat.exists
         )
 
+    - name: Should create systemd unit file
+      slurp:
+        src: /etc/systemd/system/vsftpd.service
+      register: systemd_unit_file
+      failed_when:
+        not systemd_unit_file.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          [Install]
+          WantedBy=multi-user.target
+
+          [Unit]
+          Description=vsftpd service
+          After=docker.service
+          Requires=docker.service
+
+          [Service]
+          ExecStartPre=-/usr/bin/docker rm -f vsftpd.service
+          ExecStartPre=/usr/bin/docker build \
+              --cache-from local/vsftpd:3.0.3-31.el8 \
+              --tag local/vsftpd:3.0.3-31.el8 \
+              /opt/vsftpd/docker
+
+          ExecStart=/usr/bin/docker run \
+              --name vsftpd.service \
+              --volume /srv/vsftpd/config/etc:/etc \
+              --volume /srv/vsftpd/config/pam.d/vsftpd:/etc/pam.d/vsftpd \
+              --volume /srv/vsftpd/config/vsftpd:/etc/vsftpd \
+              --volume /srv/vsftpd/home:/home \
+              --volume /srv/vsftpd/public:/var/ftp \
+              --volume /var/log/vsftpd:/var/log \
+              --volume /srv/openssl/certs/ftp.site.org/fullchain.pem:/etc/ssl/cert.pem:ro \
+              --volume /srv/openssl/certs/ftp.site.org/privkey.pem:/etc/ssl/cert.key:ro \
+              --publish 0.0.0.0:20:20 \
+              --publish 0.0.0.0:21:21 \
+              --publish 0.0.0.0:21111-21112:21111-21112 \
+              --tmpfs /tmp \
+              local/vsftpd:3.0.3-31.el8
+
+          ExecStop=-/usr/bin/docker stop vsftpd.service
+          ExecStopPost=-/usr/bin/docker rm -f vsftpd.service
+
+          Restart=always
+          RestartSec=60s
+          TimeoutSec=3600
+
     - name: Should template Dockerfile
       slurp:
         src: /opt/vsftpd/docker/Dockerfile
@@ -99,14 +145,14 @@
         not docker_file.content == ( expected_content | b64encode )
       vars:
         expected_content: |
-          FROM centos:8.1.1911
+          FROM centos:8.2.2004
 
           MAINTAINER borisskert <boris.skert@gmail.com>
 
           RUN yum -y update && \
               yum clean all && \
               yum install -y \
-                vsftpd && \
+                vsftpd-3.0.3-31.el8 && \
               yum clean all
 
           COPY add-vsftpd-user.sh /add-vsftpd-user.sh
@@ -120,13 +166,30 @@
 
     - name: Should build docker image
       docker_image:
-        name: local/vsftpd:latest
+        name: local/vsftpd:3.0.3-31.el8
         source: local
         state: present
+
+    - name: Should setup logrotate
+      slurp:
+        src: /etc/logrotate.d/vsftpd
+      register: logrotate_config
+      failed_when:
+        not logrotate_config.content == ( expected_content | b64encode )
+      vars:
+        expected_content: |
+          /var/log/vsftpd/*.log
+          /var/log/vsftpd/xferlog
+          {
+              rotate 8
+              weekly
+              compress
+              missingok
+          }
 
   post_tasks:
     - name: Delete built docker image
       docker_image:
-        name: local/vsftpd:latest
+        name: local/vsftpd:3.0.3-31.el8
         state: absent
       failed_when: false

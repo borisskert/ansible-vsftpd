@@ -19,6 +19,11 @@ jobs:
           path: "${{ github.repository }}"
 
       - name: lint and test with molecule
-        uses: borisskert/molecule-action@v0.1
+        uses: borisskert/molecule-action@v20.09.27
         with:
           arguments: test
+
+      - name: lint and test with molecule
+        uses: borisskert/molecule-action@v20.09.27
+        with:
+          arguments: test -s use-specified-vsftpd-version

@@ -42,4 +42,5 @@
   template:
     src: logrotate.j2
     dest: "{{ vsftpd_logrotate_config }}"
+    mode: 0755
   when: vsftpd_logrotate_enable | bool
